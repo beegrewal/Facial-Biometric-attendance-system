@@ -133,26 +133,22 @@ class Student:
         StudentID_entry=Entry(Class_student_information,textvariable=self.var_student_id,width=20,font=("times new roman",13,"bold"))
         StudentID_entry.grid(row=0,column=1,sticky=W)
 
-        #Class Division
-        Class_Division=Label(Class_student_information,text="Class Division",font=("times new roman",10,"bold"),bg="white",fg="green")
-        Class_Division.grid(row=0,column=2,padx=10,pady=10,sticky=W)
+         #Student Name
+        StudentN_label=Label(Class_student_information,text="Student Name",font=("times new roman",10,"bold"),bg="white",fg="green")
+        StudentN_label.grid(row=1,column=0,padx=10,pady=10,sticky=W)
 
-        Class_entry=Entry(Class_student_information,textvariable=self.var_class_division,width=20,font=("times new roman",13,"bold"))
-        Class_entry.grid(row=0,column=3,sticky=W)
+        StudentN_entry=Entry(Class_student_information,textvariable=self.var_student_name,width=20,font=("times new roman",13,"bold"))
+        StudentN_entry.grid(row=1,column=1,sticky=W)
 
          #Gender
         Gender_label=Label(Class_student_information,text="Gender",font=("times new roman",10,"bold"),bg="white",fg="green")
-        Gender_label.grid(row=1,column=0,padx=10,pady=10,sticky=W)
-
-        Gender_entry=Entry(Class_student_information,textvariable=self.var_gender,width=20,font=("times new roman",13,"bold"))
-        Gender_entry.grid(row=1,column=1,sticky=W)
-
-        # Email
-        Email_label=Label(Class_student_information,text="Email",font=("times new roman",10,"bold"),bg="white",fg="green")
-        Email_label.grid(row=1,column=2,padx=10,pady=10,sticky=W)
-
-        Email_entry=Entry(Class_student_information,textvariable=self.var_email,width=20,font=("times new roman",13,"bold"))
-        Email_entry.grid(row=1,column=3,sticky=W)
+        Gender_label.grid(row=1,column=2,padx=10,pady=10,sticky=W)
+        
+        
+        Gender_combo=ttk.Combobox(Class_student_information,textvariable=self.var_gender,font=("times new roman",10,"bold"),width=23,state="readonly")
+        Gender_combo['values']=("Male","Female","Other")
+        Gender_combo.current(0)
+        Gender_combo.grid(row=1,column=3,sticky=W)
 
          #Address
         Address_label=Label(Class_student_information,text="Address",font=("times new roman",10,"bold"),bg="white",fg="green")
@@ -161,13 +157,16 @@ class Student:
         Address_entry=Entry(Class_student_information,textvariable=self.var_address,width=20,font=("times new roman",13,"bold"))
         Address_entry.grid(row=2,column=1,sticky=W)
 
-         #Student Name
-        StudentN_label=Label(Class_student_information,text="Student Name",font=("times new roman",10,"bold"),bg="white",fg="green")
-        StudentN_label.grid(row=2,column=2,padx=10,pady=10,sticky=W)
+          # Email
+        Email_label=Label(Class_student_information,text="Email",font=("times new roman",10,"bold"),bg="white",fg="green")
+        Email_label.grid(row=2,column=2,padx=10,pady=10,sticky=W)
 
-        StudentN_entry=Entry(Class_student_information,textvariable=self.var_student_name,width=20,font=("times new roman",13,"bold"))
-        StudentN_entry.grid(row=2,column=3,sticky=W)
+        Email_entry=Entry(Class_student_information,textvariable=self.var_email,width=20,font=("times new roman",13,"bold"))
+        Email_entry.grid(row=2,column=3,sticky=W)
 
+       
+
+       
          #Roll Number
         Roll_Number_label=Label(Class_student_information,text="Roll Number",font=("times new roman",10,"bold"),bg="white",fg="green")
         Roll_Number_label.grid(row=3,column=0,padx=10,pady=10,sticky=W)
@@ -176,7 +175,7 @@ class Student:
         Roll_Number_entry.grid(row=3,column=1,sticky=W)
 
          #DOB
-        DOB_label=Label(Class_student_information,text="DOB",font=("times new roman",10,"bold"),bg="white",fg="green")
+        DOB_label=Label(Class_student_information,text="DOB (YY/MM/DD)",font=("times new roman",10,"bold"),bg="white",fg="green")
         DOB_label.grid(row=3,column=2,padx=10,pady=10,sticky=W)
 
         DOB_entry=Entry(Class_student_information,textvariable=self.var_DOB,width=20,font=("times new roman",13,"bold"))
@@ -212,13 +211,13 @@ class Student:
         save_button=Button(button_frame,text="Save",command=self.add_data,width=16,font=("times new roman",13,"bold"),bg="green",fg="white")
         save_button.grid(row=0,column=0)
 
-        Update_button=Button(button_frame,text="Update",width=16,font=("times new roman",13,"bold"),bg="green",fg="white")
+        Update_button=Button(button_frame,text="Update",command=self.Update_data,width=16,font=("times new roman",13,"bold"),bg="green",fg="white")
         Update_button.grid(row=0,column=1)
 
-        Delete_button=Button(button_frame,text="Delete",width=16,font=("times new roman",13,"bold"),bg="green",fg="white")
+        Delete_button=Button(button_frame,text="Delete",command=self.delete_data,width=16,font=("times new roman",13,"bold"),bg="green",fg="white")
         Delete_button.grid(row=0,column=2)
         
-        Reset_button=Button(button_frame,text="Reset",width=16,font=("times new roman",13,"bold"),bg="green",fg="white")
+        Reset_button=Button(button_frame,text="Reset",command=self.reset_data,width=16,font=("times new roman",13,"bold"),bg="green",fg="white")
         Reset_button.grid(row=0,column=3)
 
         button_frame1=Frame(Class_student_information,bd=2,relief=RIDGE,bg="white")
@@ -270,7 +269,7 @@ class Student:
         Scrollbar_x=ttk.Scrollbar(Table_frame,orient=HORIZONTAL)
         Scrollbar_y=ttk.Scrollbar(Table_frame,orient=VERTICAL)
 
-        self.student_table=ttk.Treeview(Table_frame,columns=("dep","course","batch","semester","student_id","class_division","gender","email","address","student_name","roll_number","DOB","phone_no","Teacher_name"),xscrollcommand=Scrollbar_x.set,yscrollcommand=Scrollbar_y.set)
+        self.student_table=ttk.Treeview(Table_frame,columns=("dep","course","batch","semester","student_id","student_name","gender","address","email","roll_number","DOB","phone_no","Teacher_name"),xscrollcommand=Scrollbar_x.set,yscrollcommand=Scrollbar_y.set)
 
         Scrollbar_x.pack(side=BOTTOM,fill=X)
         Scrollbar_y.pack(side=RIGHT,fill=Y)
@@ -282,7 +281,6 @@ class Student:
         self.student_table.heading("batch",text="Batch")
         self.student_table.heading("semester",text="Semester")
         self.student_table.heading("student_id",text="Student Id")
-        self.student_table.heading("class_division",text="Class Division")
         self.student_table.heading("gender",text="Gender")
         self.student_table.heading("email",text="Email")
         self.student_table.heading("address",text="Address")
@@ -299,7 +297,6 @@ class Student:
         self.student_table.column("batch",width=100)
         self.student_table.column("semester",width=100)
         self.student_table.column("student_id",width=100)
-        self.student_table.column("class_division",width=100)
         self.student_table.column("gender",width=100)
         self.student_table.column("email",width=100)
         self.student_table.column("address",width=100)
@@ -312,7 +309,8 @@ class Student:
 
 
         self.student_table.pack(fill=BOTH,expand=1)
-
+        self.student_table.bind("<ButtonRelease>",self.get_cursor)
+        self.fetch_data()
         
 ### Database System 
 
@@ -323,18 +321,17 @@ class Student:
             try:
                 conn=mysql.connector.connect(host="localhost",username="root",password="1973",database="face_recognisation_system")
                 my_cursor=conn.cursor()
-                my_cursor.execute("insert into student values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                my_cursor.execute("insert into student values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
                 (
                                                                                                                 self.var_dep.get(),
                                                                                                                 self.var_course.get(),
                                                                                                                 self.var_batch.get(),
                                                                                                                 self.var_semester.get(),
                                                                                                                 self.var_student_id.get(),
-                                                                                                                self.var_class_division.get(),
-                                                                                                                self.var_gender.get(),
-                                                                                                                self.var_email.get(),
-                                                                                                                self.var_address.get(),
                                                                                                                 self.var_student_name.get(),
+                                                                                                                self.var_gender.get(),
+                                                                                                                self.var_address.get(),
+                                                                                                                self.var_email.get(),
                                                                                                                 self.var_roll_number.get(),
                                                                                                                 self.var_DOB.get(),
                                                                                                                 self.var_Phone_no.get(),
@@ -343,24 +340,162 @@ class Student:
                                                                                                                                
                                                                                                                                 ))
                 conn.commit()
+                self.fetch_data()
                 conn.close()
                 messagebox.showinfo("Success","Deatails added successfully",parent=self.root)
             except  Exception as es:
                 messagebox.showerror("Error",f"Due to:{str(es)}",parent=self.root) 
-                     
-            
+
+## Fetch Data
+
+    def fetch_data(self):
+         conn=mysql.connector.connect(host="localhost",username="root",password="1973",database="face_recognisation_system")
+         my_cursor=conn.cursor()
+         my_cursor.execute("select * From Student")
+         data=my_cursor.fetchall()
+
+         if len(data)!=0:
+                self.student_table.delete(*self.student_table.get_children())
+                for i in data:
+                        self.student_table.insert("",END,values=i)
+                conn.commit()
+         conn.close()
+
+
+## Get Cursor
+
+
+    def get_cursor(self,event=""):
+        cursor_focus=self.student_table.focus()
+        content=self.student_table.item(cursor_focus)
+        data=content["values"]
+
+        self.var_dep.set(data[0]),
+        self.var_course.set(data[1]),
+        self.var_batch.set(data[2]),
+        self.var_semester.set(data[3]),
+        self.var_student_id.set(data[4]),
+        self.var_student_name.set(data[5]),
+        self.var_gender.set(data[6]),
+        self.var_address.set(data[7]),
+        self.var_email.set(data[8]),
+        self.var_roll_number.set(data[9]),
+        self.var_DOB.set(data[10]),
+        self.var_Phone_no.set(data[11]),
+        self.var_Teacher_name.set(data[12]),
+        self.var_radio1.set(data[13]),
+       
+
+##Update Function
+
+    def Update_data(self):
+        if self.var_dep.get() == "Select Department" or self.var_student_name.get() == "" or self.var_student_id.get() == "":
+              messagebox.showerror("Error", "All Fields are required", parent=self.root)
+        else:
+            try:
+                Update = messagebox.askyesno("Update", "Do you want to update this student's details?", parent=self.root)
+                if Update > 0:
+                    conn = mysql.connector.connect(
+                         host="localhost",
+                         username="root",
+                         password="1973",
+                         database="face_recognisation_system"
+                    )
+                    my_cursor = conn.cursor()
+                    my_cursor.execute("""
+                        UPDATE student SET 
+                            dep = %s,
+                            course = %s,
+                            batch = %s,
+                            semester = %s,
+                            student_name = %s,
+                            gender = %s,
+                            address = %s,
+                            email = %s,
+                            roll_number = %s,
+                            DOB = %s,
+                            phone_no = %s,
+                            Teacher_name = %s
+                        WHERE 
+                            student_id = %s
+                    """, (
+                        self.var_dep.get(),
+                        self.var_course.get(),
+                        self.var_batch.get(),
+                        self.var_semester.get(),
+                        self.var_student_name.get(),
+                        self.var_gender.get(),
+                        self.var_address.get(),
+                        self.var_email.get(),
+                        self.var_roll_number.get(),
+                        self.var_DOB.get(),
+                        self.var_Phone_no.get(),
+                        self.var_Teacher_name.get(),
+                        self.var_student_id.get()
+                    )) 
+                   
+
+                    conn.commit()
+                    messagebox.showinfo("Success", "Student Details Updated Successfully", parent=self.root)
+                    self.fetch_data()
+                    conn.close()
+                else:
+                    return
+            except Exception as es:
+                messagebox.showerror("Error", f"Due To: {str(es)}", parent=self.root)
+        
+##Delete Function   
+
+    def delete_data(self):
+        if self.var_student_id.get() == "":
+           messagebox.showerror("Error", "Student ID must be required", parent=self.root)
+        else:
+            try:
+               delete = messagebox.askyesno("Student Delete Page", "Do you want to delete student data?", parent=self.root)
+               if delete > 0:
+                   conn = mysql.connector.connect(
+                       host="localhost",
+                       username="root",
+                       password="1973",
+                       database="face_recognisation_system"
+                   )
+                   my_cursor = conn.cursor()
+                   sql = "DELETE FROM student WHERE student_id = %s"
+                   val = (self.var_student_id.get(),)
+                   my_cursor.execute(sql, val)
+                   conn.commit()
+                   self.fetch_data()
+                   conn.close()
+                   messagebox.showinfo("Success", "Student Details Deleted Successfully", parent=self.root)
+               else:
+                   return
+            except Exception as es:
+               messagebox.showerror("Error", f"Due To: {str(es)}", parent=self.root)
+
+##Reset Function
+    def reset_data(self):
+        self.var_dep.set("")
+        self.var_course.set("")
+        self.var_batch.set("")
+        self.var_semester.set("")
+        self.var_student_id.set("")
+        self.var_student_name.set("")
+        self.var_gender.set("")
+        self.var_address.set("")
+        self.var_email.set("")
+        self.var_roll_number.set("")
+        self.var_DOB.set("")
+        self.var_Phone_no.set("")
+        self.var_Teacher_name.set("")
+        self.var_radio1.set("")
+        messagebox.showinfo("Success", "Form has been reset", parent=self.root)
+
+        
+
+      
                
                 
                 
-
-
-
-
-
-
-
-
-
 
 
 
