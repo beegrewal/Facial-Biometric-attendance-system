@@ -7,7 +7,7 @@ class Face_Recognition_System:
     def __init__(self,root):
         self.root=root
         self.root.geometry("1920x1200+0+0")
-        self.root.title("face recognition system")
+        self.root.title("Face Authentication System")
 
 
 # header 
@@ -41,7 +41,7 @@ class Face_Recognition_System:
         bg_img=Label(self.root,image=self.photoimg4)
         bg_img.place(x=0,y=130,width=1530,height=850)
 
-        title_lbl=Label(bg_img,text="FACE RECOGNITION BIOMETRIC ATTENDANCE SYSTEM",font=("times new roman",35,"bold"),bg="white",fg="Green")
+        title_lbl=Label(bg_img,text="FACE AUTHENTICATE BIOMETRIC ATTENDANCE SYSTEM",font=("times new roman",35,"bold"),bg="white",fg="Green")
         title_lbl.place(x=0,y=0,width=1540,height=50)
 
 # student button

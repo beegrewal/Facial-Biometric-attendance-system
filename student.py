@@ -3,6 +3,7 @@ from tkinter import ttk
 from PIL import Image,ImageTk
 from tkinter import messagebox
 import mysql.connector
+import cv2
 
 class Student:
     def __init__(self,root):
@@ -16,7 +17,6 @@ class Student:
         self.var_batch=StringVar()
         self.var_semester=StringVar()
         self.var_student_id=StringVar()
-        self.var_class_division=StringVar()
         self.var_gender=StringVar()
         self.var_email=StringVar()
         self.var_address=StringVar()
@@ -25,6 +25,7 @@ class Student:
         self.var_DOB=StringVar()
         self.var_Phone_no=StringVar()
         self.var_Teacher_name=StringVar()
+        
         
 ### header 
 
@@ -223,7 +224,7 @@ class Student:
         button_frame1=Frame(Class_student_information,bd=2,relief=RIDGE,bg="white")
         button_frame1.place(x=5,y=285,width=665,height=35)
 
-        Take_photo_button=Button(button_frame1,text="Take Photo Sample",width=33,font=("times new roman",13,"bold"),bg="green",fg="white")
+        Take_photo_button=Button(button_frame1,text="Take Photo Sample",command=self.generate_dataset,width=33,font=("times new roman",13,"bold"),bg="green",fg="white")
         Take_photo_button.grid(row=1,column=0)
         
         Update_Photo_button=Button(button_frame1,text="Update Photo Sample",width=33,font=("times new roman",13,"bold"),bg="green",fg="white")
@@ -251,16 +252,19 @@ class Student:
         Search_label=Label(Search_frame,text="Search By :",font=("times new roman",10,"bold"),bg="white",fg="green")
         Search_label.grid(row=0,column=0,padx=10,pady=10,sticky=W)
 
-        Search_combo=ttk.Combobox(Search_frame,font=("times new roman",10,"bold"),width=20,state="readonly")
+        Search_combo=ttk.Combobox(Search_frame,font=("times new roman",10,"bold"),width=15,state="readonly")
         Search_combo['values']=("Select","Roll No","Phone No")
         Search_combo.current(0)
         Search_combo.grid(row=0,column=1,padx=5,pady=10)
 
+        Search_entry=Entry(Search_frame,text="Search",width=15,font=("times new roman",13,"bold"))
+        Search_entry.grid(row=0,column=2,sticky=W)
+
         Search_button=Button(Search_frame,text="Search",width=12,font=("times new roman",13,"bold"),bg="green",fg="white")
-        Search_button.grid(row=0,column=2,padx=8)
+        Search_button.grid(row=0,column=3,padx=8)
 
         Show_button=Button(Search_frame,text="Show",width=12,font=("times new roman",13,"bold"),bg="green",fg="white")
-        Show_button.grid(row=0,column=3,padx=8)
+        Show_button.grid(row=0,column=4,padx=8)
 
         #table frame
         Table_frame=LabelFrame(main_frame,bd=2,relief=RIDGE,text="Search Student Information",font=("times new roman",10,"bold"),bg="white",fg="green")
@@ -269,7 +273,7 @@ class Student:
         Scrollbar_x=ttk.Scrollbar(Table_frame,orient=HORIZONTAL)
         Scrollbar_y=ttk.Scrollbar(Table_frame,orient=VERTICAL)
 
-        self.student_table=ttk.Treeview(Table_frame,columns=("dep","course","batch","semester","student_id","student_name","gender","address","email","roll_number","DOB","phone_no","Teacher_name"),xscrollcommand=Scrollbar_x.set,yscrollcommand=Scrollbar_y.set)
+        self.student_table=ttk.Treeview(Table_frame,columns=("dep","course","batch","semester","student_id","student_name","gender","address","email","roll_number","DOB","phone_no","Teacher_name","Photo"),xscrollcommand=Scrollbar_x.set,yscrollcommand=Scrollbar_y.set)
 
         Scrollbar_x.pack(side=BOTTOM,fill=X)
         Scrollbar_y.pack(side=RIGHT,fill=Y)
@@ -289,7 +293,7 @@ class Student:
         self.student_table.heading("DOB",text="DOB")
         self.student_table.heading("phone_no",text="Phone No")
         self.student_table.heading("Teacher_name",text="Teacher Name")
-        
+        self.student_table.heading("Photo",text="Photo")
         self.student_table['show']="headings"
 
         self.student_table.column("dep",width=100)
@@ -305,6 +309,7 @@ class Student:
         self.student_table.column("DOB",width=100)
         self.student_table.column("phone_no",width=100)
         self.student_table.column("Teacher_name",width=100)
+        self.student_table.column("Photo",width=150)
 
 
 
@@ -336,7 +341,7 @@ class Student:
                                                                                                                 self.var_DOB.get(),
                                                                                                                 self.var_Phone_no.get(),
                                                                                                                 self.var_Teacher_name.get(),
-                                                                                                                self.var_radio1.get(),
+                                                                                                                self.var_radio1.get()
                                                                                                                                
                                                                                                                                 ))
                 conn.commit()
@@ -415,7 +420,8 @@ class Student:
                             roll_number = %s,
                             DOB = %s,
                             phone_no = %s,
-                            Teacher_name = %s
+                            Teacher_name = %s,
+                            Photo=%s
                         WHERE 
                             student_id = %s
                     """, (
@@ -431,6 +437,7 @@ class Student:
                         self.var_DOB.get(),
                         self.var_Phone_no.get(),
                         self.var_Teacher_name.get(),
+                        self.var_radio1.get(),
                         self.var_student_id.get()
                     )) 
                    
@@ -488,12 +495,115 @@ class Student:
         self.var_Phone_no.set("")
         self.var_Teacher_name.set("")
         self.var_radio1.set("")
-        messagebox.showinfo("Success", "Form has been reset", parent=self.root)
+        
+        
 
         
 
       
+## Photo Sample Take Photo
+
+    def generate_dataset(self):
+        if self.var_dep.get() == "Select Department" or self.var_student_name.get() == "" or self.var_student_id.get() == "":
+              messagebox.showerror("Error", "All Fields are required", parent=self.root)
+        else:
+            try:
+                conn = mysql.connector.connect(host="localhost",username="root",password="1973",database="face_recognisation_system")
+                my_cursor = conn.cursor()
+                my_cursor.execute("select * from student")
+                myresult=my_cursor.fetchall()
+                id=0
+                for x in myresult:
+                    id+=1
+                my_cursor.execute("""
+                        UPDATE student SET 
+                            dep = %s,
+                            course = %s,
+                            batch = %s,
+                            semester = %s,
+                            student_name = %s,
+                            gender = %s,
+                            address = %s,
+                            email = %s,
+                            roll_number = %s,
+                            DOB = %s,
+                            phone_no = %s,
+                            Teacher_name = %s,
+                            Photo=%s
+                        WHERE 
+                            student_id = %s
+                    """, (
+                        self.var_dep.get(),
+                        self.var_course.get(),
+                        self.var_batch.get(),
+                        self.var_semester.get(),
+                        self.var_student_name.get(),
+                        self.var_gender.get(),
+                        self.var_address.get(),
+                        self.var_email.get(),
+                        self.var_roll_number.get(),
+                        self.var_DOB.get(),
+                        self.var_Phone_no.get(),
+                        self.var_Teacher_name.get(),
+                        self.var_radio1.get(),
+                        self.var_student_id.get()==id+1
+                    
+                    )) 
+                conn.commit()
+                self.fetch_data()
+                self.reset_data()
+                conn.close()
+                
+           
+                # Load Face Data Frontalface Data
+
+                face_classifier=cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+
+                def face_cropped(img):
+                    gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+                    faces=face_classifier.detectMultiScale(gray,1.3,5)
+                    #scaling factor=1.3
+                    #Minimun Neighbor=5
+
+                    for (x,y,w,h) in faces:
+                        face_cropped=img[y:y+h, x:x+w]
+                        return face_cropped
+
+                cap=cv2.VideoCapture(0) 
+                img_id=0 
+                while True:
+                   ret,my_frame=cap.read()
+                   if face_cropped(my_frame) is not None:
+                       img_id+=1                            
+                   face=cv2.resize(face_cropped(my_frame),(450,450))
+                   face=cv2.cvtColor(face,cv2.COLOR_BGR2GRAY)
+                   file_name_path="data/user."+str(id)+"."+str(img_id)+".jpg"
+                   cv2.imwrite(file_name_path)
+                   cv2.putText(face,str(img_id),(50,50),cv2.FONT_HERSHEY_COMPLEX,2,(0,255,0),2)
+                   cv2.imshow("Cropped Face",face)
+
+                   if cv2.waitKey(1)==13 or int(img_id)==100:
+                        break
+                cap.release()
+                cv2.destroyAllWindows()
+                messagebox.showinfo("Result","**Generating data sets completed**")
+                    
+            except Exception as es:
+                messagebox.showerror("Error", f"Due To: {str(es)}", parent=self.root)
                
+       
+
+
+
+
+
+
+                 
+                
+
+
+
+
                 
                 
 
